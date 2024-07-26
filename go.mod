@@ -1,6 +1,6 @@
-module github.com/VU-ASE/pkg-Rtc
+module github.com/VU-ASE/roverrtc
 
-go 1.21.6
+go 1.22.0
 
 require (
 	github.com/pion/webrtc/v4 v4.0.0-beta.7
