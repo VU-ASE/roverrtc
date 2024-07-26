@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/VU-ASE/roverrtc/compare/v1.0.1...v1.0.2) (2024-07-26)
+
+
+### Bug Fixes
+
+* stupid go ([cc6cd64](https://github.com/VU-ASE/roverrtc/commit/cc6cd64d52d5c146e9c096d341971c3246631451))
+
 ## [1.0.1](https://github.com/VU-ASE/roverrtc/compare/v1.0.0...v1.0.1) (2024-07-26)
 
 
