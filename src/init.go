@@ -99,23 +99,35 @@ func (r *RTC) IsConnected() bool {
 // Wrapper functions to easily send on the data channels, without having to check if they are nil every time
 //
 
-func (r *RTC) SendDataMessage(pb proto.Message) error {
+// Sending on the data channel
+func (r *RTC) SendData(pb proto.Message) error {
+	content, err := proto.Marshal(pb)
+	if err != nil {
+		return err
+	}
+
+	return r.SendDataBytes(content)
+}
+func (r *RTC) SendDataBytes(b []byte) error {
 	log := r.Log()
 
 	if r.DataChannel == nil {
 		log.Warn().Msg("Cannot send on data channel. Data channel is not configured")
 		return fmt.Errorf("Data channel is not configured")
 	}
+	return r.DataChannel.Send(b)
+}
 
+// Sending on the control channel
+func (r *RTC) SendControlData(pb proto.Message) error {
 	content, err := proto.Marshal(pb)
 	if err != nil {
 		return err
 	}
 
-	return r.DataChannel.Send(content)
+	return r.SendControlBytes(content)
 }
-
-func (r *RTC) SendControlBytes(data []byte) error {
+func (r *RTC) SendControlBytes(b []byte) error {
 	log := r.Log()
 
 	if r.ControlChannel == nil {
@@ -123,5 +135,5 @@ func (r *RTC) SendControlBytes(data []byte) error {
 		return fmt.Errorf("Control channel is not configured")
 	}
 
-	return r.ControlChannel.Send(data)
+	return r.ControlChannel.Send(b)
 }
