@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/VU-ASE/roverrtc/compare/v1.0.0...v1.1.0) (2024-12-01)
+
+
+### Features
+
+* simplified communication channels, added devcontainer ([f547711](https://github.com/VU-ASE/roverrtc/commit/f5477113be4d1fcbec469aed41dff01fef8468b1))
+
 ## 1.0.0 (2024-07-26)
 
 
