@@ -8,6 +8,7 @@ lint:
 	@echo "Lint check..."
 	@golangci-lint run
 
+# nb: it does not make much sense to build a library into a binary, but you do you
 build: lint
 	@echo "building ${BINARY_NAME}"
 	@cd src/ && go build -o "../$(BUILD_DIR)${BINARY_NAME}" ${buildargs}
