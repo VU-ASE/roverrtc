@@ -1,6 +1,7 @@
 package rtc
 
 import (
+	"fmt"
 	"sync"
 
 	// Add zerolog
@@ -21,10 +22,9 @@ type RTC struct {
 	Pc             *webrtc.PeerConnection    // the actual webRTC connection
 	Candidates     []webrtc.ICECandidateInit // the **local** ICE candidates (that can be transmitted to the other peers)
 	CandidatesLock *sync.Mutex               // to make sure ICE candidates can be managed concurrently
-	// Data channels
-	MetaChannel     *webrtc.DataChannel // the data channel used to send meta information about requests made (such as requesting a video stream)
-	ControlChannel  *webrtc.DataChannel // the data channel used to send controller data (e.g. steering wheel angle)
-	FrameChannel    *webrtc.DataChannel // the data channel used to send frames with video data and other meta information (such as sensoric data)
+	// Communication channels
+	ControlChannel  *webrtc.DataChannel // the data channel used for the control protocol between server and client
+	DataChannel     *webrtc.DataChannel // the data channel used to send debugging information and tuning state
 	TimestampOffset int64               // the timestamp offset to calculate the time difference between the client and the server
 }
 
@@ -99,43 +99,28 @@ func (r *RTC) IsConnected() bool {
 // Wrapper functions to easily send on the data channels, without having to check if they are nil every time
 //
 
-func (r *RTC) SendMetaMessage(protobuffer proto.Message) error {
+func (r *RTC) SendDataMessage(pb proto.Message) error {
 	log := r.Log()
 
-	// We don't need to report an error
-	if r.MetaChannel == nil {
-		log.Warn().Msg("Cannot send meta data. Meta channel is not configured")
-		return nil
+	if r.DataChannel == nil {
+		log.Warn().Msg("Cannot send on data channel. Data channel is not configured")
+		return fmt.Errorf("Data channel is not configured")
 	}
 
-	// Create bytes from protobuf struct
-	content, err := proto.Marshal(protobuffer)
+	content, err := proto.Marshal(pb)
 	if err != nil {
 		return err
 	}
 
-	return r.MetaChannel.Send(content)
-}
-
-func (r *RTC) SendFrameBytes(data []byte) error {
-	log := r.Log()
-
-	// We don't need to report an error to the caller, but we can report it to the client over the meta channel
-	if r.FrameChannel == nil {
-		log.Warn().Msg("Cannot send frame data. Frame channel is not configured")
-		return nil
-	}
-
-	return r.FrameChannel.Send(data)
+	return r.DataChannel.Send(content)
 }
 
 func (r *RTC) SendControlBytes(data []byte) error {
 	log := r.Log()
 
-	// We don't need to report an error to the caller, but we can report it to the client over the meta channel
 	if r.ControlChannel == nil {
 		log.Warn().Msg("Cannot send control data. Control channel is not configured")
-		return nil
+		return fmt.Errorf("Control channel is not configured")
 	}
 
 	return r.ControlChannel.Send(data)
