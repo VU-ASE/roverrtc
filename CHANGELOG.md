@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/VU-ASE/roverrtc/compare/v1.1.0...v1.2.0) (2024-12-01)
+
+
+### Features
+
+* expose low-level byte sending interface for control and data ([ab65d11](https://github.com/VU-ASE/roverrtc/commit/ab65d11096c52c30d31d5535d0f112e87eb1db26))
+
 ## [1.1.0](https://github.com/VU-ASE/roverrtc/compare/v1.0.0...v1.1.0) (2024-12-01)
 
 
