@@ -45,6 +45,8 @@ func (m *RTCMap) Remove(id string) error {
 	return nil
 }
 
+// Add a new RTC connection. If the connection identifier already exists, it will be removed first.
+// If the maximum number of connections is reached, an error will be returned.
 func (m *RTCMap) Add(id string, rtc *RTC, isCar bool) error {
 	m.lock.Lock()
 	defer m.lock.Unlock()
@@ -57,7 +59,9 @@ func (m *RTCMap) Add(id string, rtc *RTC, isCar bool) error {
 
 	existingEntry := m.rtcMap[id]
 	if existingEntry != nil && existingEntry.Pc.ConnectionState() != webrtc.PeerConnectionStateClosed && existingEntry.Pc.ConnectionState() != webrtc.PeerConnectionStateDisconnected {
-		return fmt.Errorf("An active connection with id %s already exists.", id)
+		// best effort-destroy the connection
+		existingEntry.Destroy()
+		log.Warn().Msgf("An active connection with id %s already exists. Overwriting it.", id)
 	}
 
 	// Remove the entry (so that the connection is properly closed)
