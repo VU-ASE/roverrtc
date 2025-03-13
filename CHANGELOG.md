@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/VU-ASE/roverrtc/compare/v1.2.0...v1.3.0) (2025-03-13)
+
+
+### Features
+
+* overwrite existing connections instead of returning an error ([d7771c2](https://github.com/VU-ASE/roverrtc/commit/d7771c24708aaf5b38176c0759aa8d329dfdba4c))
+
 ## [1.2.0](https://github.com/VU-ASE/roverrtc/compare/v1.1.0...v1.2.0) (2024-12-01)
 
 
