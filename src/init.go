@@ -2,7 +2,6 @@ package rtc
 
 import (
 	"fmt"
-	"sync"
 
 	// Add zerolog
 	"github.com/rs/zerolog"
@@ -18,10 +17,9 @@ import (
 //
 
 type RTC struct {
-	Id             string                    // the id of the connection (e.g. the client id)
-	Pc             *webrtc.PeerConnection    // the actual webRTC connection
-	Candidates     []webrtc.ICECandidateInit // the **local** ICE candidates (that can be transmitted to the other peers)
-	CandidatesLock *sync.Mutex               // to make sure ICE candidates can be managed concurrently
+	Id         string                    // the id of the connection (e.g. the client id)
+	Pc         *webrtc.PeerConnection    // the actual webRTC connection
+	Candidates []webrtc.ICECandidateInit // the **local** ICE candidates (that can be transmitted to the other peers)
 	// Communication channels
 	ControlChannel  *webrtc.DataChannel // the data channel used for the control protocol between server and client
 	DataChannel     *webrtc.DataChannel // the data channel used to send debugging information and tuning state
@@ -35,13 +33,11 @@ func (r *RTC) Log() zerolog.Logger {
 }
 
 func NewRTC(id string) *RTC {
-	var candidatesMux sync.Mutex
 	candidates := make([]webrtc.ICECandidateInit, 0)
 
 	return &RTC{
 		Id:              id,
 		Candidates:      candidates,
-		CandidatesLock:  &candidatesMux,
 		TimestampOffset: 0,
 	}
 }
@@ -50,18 +46,12 @@ func NewRTC(id string) *RTC {
 func (r *RTC) AddLocalCandidate(candidate webrtc.ICECandidateInit) {
 	log := r.Log()
 
-	r.CandidatesLock.Lock()
-	defer r.CandidatesLock.Unlock()
-
 	r.Candidates = append(r.Candidates, candidate)
 	log.Debug().Msg("Added local ICE candidate")
 }
 
 // Get a copy of all local ICE candidates (concurrency-safe)
 func (r *RTC) GetAllLocalCandidates() []webrtc.ICECandidateInit {
-	r.CandidatesLock.Lock()
-	defer r.CandidatesLock.Unlock()
-
 	original := r.Candidates
 	safeCandidates := make([]webrtc.ICECandidateInit, len(original))
 	copy(safeCandidates, original)
@@ -82,8 +72,6 @@ func (r *RTC) Destroy() {
 		log.Err(err).Msg("Cannot close RTC connection")
 	}
 
-	r.CandidatesLock.Lock()
-	defer r.CandidatesLock.Unlock()
 	r.Candidates = make([]webrtc.ICECandidateInit, 0)
 
 	r.Pc = nil
