@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/VU-ASE/roverrtc/compare/v1.3.0...v1.3.1) (2025-03-26)
+
+
+### Bug Fixes
+
+* remove deadlocking locks ([2f235a0](https://github.com/VU-ASE/roverrtc/commit/2f235a08037c6f0839709d684898ee4d299851a1))
+
 ## [1.3.0](https://github.com/VU-ASE/roverrtc/compare/v1.2.0...v1.3.0) (2025-03-13)
 
 
